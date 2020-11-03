@@ -1,7 +1,8 @@
 
 import 'package:flutter/material.dart';
-import 'package:navigator_test_example/manager.dart';
 import 'package:navigator_test_example/second_widget.dart';
+
+import 'container_manager.dart';
 
 class FirstWidget extends StatelessWidget {
   @override
@@ -10,9 +11,10 @@ class FirstWidget extends StatelessWidget {
       appBar: AppBar(title: const Text('first'),),
       body: Center(
         child: RaisedButton(
-          child: const Text('click to route to second'),
+          child: const Text('click'),
           onPressed: () {
-            Manager.singleton.currentState.pushContainer((context) => SecondWidget());
+            ContainerManagerState state =  context.findAncestorStateOfType<ContainerManagerState>();
+          state.pushContainer((context) => SecondWidget());
         })
       ),
     );

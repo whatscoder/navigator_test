@@ -3,8 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:navigator_test_example/first_widget.dart';
 
-import 'container_overlay_entry.dart';
-
 class ContainerManager extends StatefulWidget {
 
   const ContainerManager({
@@ -42,7 +40,7 @@ class ContainerManagerState extends State<ContainerManager> {
     });
   }
 
-    @override
+  @override
   void setState(VoidCallback fn) {
     if (SchedulerBinding.instance.schedulerPhase ==
         SchedulerPhase.persistentCallbacks) {
@@ -54,14 +52,6 @@ class ContainerManagerState extends State<ContainerManager> {
     }
 
     fn();
-    //return super.setState(fn);
-  }
-
-  void updateFocuse() {
-    final NavigatorState now = _stateOf(_onstage);
-    if (now != null) {
-      FocusScope.of(context).setFirstFocus(now.focusScopeNode);
-    }
   }
 
   @override
@@ -87,24 +77,10 @@ class ContainerManagerState extends State<ContainerManager> {
     });
   }
 
-  NavigatorState _stateOf(Navigator container) {
-    if (container.key is GlobalKey<NavigatorState>) {
-      final GlobalKey<NavigatorState> globalKey =
-          container.key as GlobalKey<NavigatorState>;
-      return globalKey.currentState;
-    }
-
-    assert(
-        false, 'key of BoostContainer must be GlobalKey<NavigatorState>');
-    return null;
-  }
-
   void _refreshOverlayEntries() {
     final OverlayState overlayState = _overlayKey.currentState;
 
-    if (overlayState == null) {
-      return;
-    }
+    if (overlayState == null) return;
 
     if (_leastEntries != null && _leastEntries.isNotEmpty) {
       for (final OverlayEntry entry in _leastEntries) {
@@ -114,19 +90,13 @@ class ContainerManagerState extends State<ContainerManager> {
 
     final List<Navigator> containers = <Navigator>[];
     containers.addAll(_offstage);
-
-    assert(_onstage != null, 'Should have a least one BoostContainer');
     containers.add(_onstage);
 
     _leastEntries = containers
         .map<OverlayEntry>(
-            (Navigator container) => ContainerOverlayEntry(container))
+            (Navigator container) => OverlayEntry(builder: (BuildContext context) => container))
         .toList(growable: false);
 
     overlayState.insertAll(_leastEntries);
-
-    SchedulerBinding.instance.addPostFrameCallback((Duration timeStamp) {
-      updateFocuse();
-    });
   }
 }
